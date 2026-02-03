@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![MovieMatch Banner](screenshots/1-login.png)
+![MovieMatch Banner](Screenshots/Login.png)
 
 **An intelligent movie recommendation system powered by machine learning**
 
