@@ -75,23 +75,23 @@ Earn badges as you rate more movies:
 ## 🖼️ Screenshots
 
 ### Welcome Screen
-![Welcome Page](screenshots/Home Page.png)
+![Welcome Page](screenshots/Home-Page.png)
 *Onboarding experience explaining features and badge system*
 
 ### Browse & Rate Movies
-![Browse Movies](screenshots/Browse Movies.png)
+![Browse Movies](screenshots/browse-movies.png)
 *Grid layout with movie posters, genres, and rating interface*
 
 ### User Profile & Achievements
-![Profile Page](screenshots/User Profile.png)
+![Profile Page](screenshots/user-profile.png)
 *Personal stats, earned badges, and rating history*
 
 ### AI-Powered Recommendations
-![Recommendations](screenshots/Recommendations.png)
+![Recommendations](screenshots/recommendations.png)
 *Personalized movie suggestions with predicted ratings*
 
 ### Social Discovery
-![Similar Users](screenshots/Similar User.png)
+![Similar Users](screenshots/similar-user.png)
 *Find users with matching taste and compatibility scores*
 
 ---
