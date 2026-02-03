@@ -1,6 +1,5 @@
 # 🎬 MovieMatch - AI-Powered Movie Recommendation Platform
 
-<div align="center">
 
 ![MovieMatch Banner](Screenshots/Login.png)
 
