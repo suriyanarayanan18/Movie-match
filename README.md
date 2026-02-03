@@ -1,8 +1,9 @@
 # 🎬 MovieMatch - AI-Powered Movie Recommendation Platform
 
 <p align="center">
-  <img src="Screenshots/Login.png" alt="MovieMatch Banner" width="800"/>
+  <img src="https://github.com/suriyanarayanan18/Movie-match/blob/main/screenshots/Login.png" alt="MovieMatch Banner" width="850" />
 </p>
+
 
 
 
