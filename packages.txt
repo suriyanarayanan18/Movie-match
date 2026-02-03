@@ -1,4 +1,5 @@
 build-essential
 python3-dev
 gfortran
-libatlas-base-dev
+libblas-dev
+liblapack-dev
