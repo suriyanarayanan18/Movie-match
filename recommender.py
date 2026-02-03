@@ -23,14 +23,18 @@ class MovieRecommender:
             ratings_df = self.movie_data.ratings_df
             print(f"Loaded {len(ratings_df)} ratings", flush=True)
             
-            # For 32M dataset, sample to make training faster
-            # Use 5 million ratings (still plenty for good recommendations)
+            # For large datasets, sample to make training faster
             if len(ratings_df) > 5000000:
-                print("Sampling 5M ratings for faster training...", flush=True)
+                print("Sampling 2M ratings for faster training...", flush=True)
                 ratings_df = ratings_df.sample(n=2000000, random_state=42)
             
+            # Auto-detect rating scale based on data
+            min_rating = ratings_df['rating'].min()
+            max_rating = ratings_df['rating'].max()
+            print(f"Rating scale detected: {min_rating} - {max_rating}", flush=True)
+            
             # Prepare data for Surprise
-            reader = Reader(rating_scale=(0.5, 5.0))  # 32M uses 0.5-5.0 scale
+            reader = Reader(rating_scale=(min_rating, max_rating))
             data = Dataset.load_from_df(
                 ratings_df[['user_id', 'movie_id', 'rating']], 
                 reader
@@ -41,9 +45,17 @@ class MovieRecommender:
             self.trainset = data.build_full_trainset()
             print("Building trainset complete", flush=True)
             
-            # Train SVD model (optimized parameters for larger dataset)
-            print("Training SVD model (this takes 2-3 minutes)...", flush=True)
-            self.model = SVD(n_factors=50, n_epochs=10, random_state=42, verbose=True)
+            # Train SVD model (optimized parameters)
+            print("Training SVD model (this takes 1-3 minutes)...", flush=True)
+            
+            # Use different parameters based on dataset size
+            if len(ratings_df) > 1000000:
+                # Larger dataset - use smaller factors for speed
+                self.model = SVD(n_factors=50, n_epochs=10, random_state=42, verbose=True)
+            else:
+                # Smaller dataset - use more factors for accuracy
+                self.model = SVD(n_factors=100, n_epochs=20, random_state=42, verbose=True)
+            
             self.model.fit(self.trainset)
             
             print("✅ Model trained successfully!")
@@ -63,7 +75,7 @@ class MovieRecommender:
         # For large datasets, only predict for a random sample of unrated movies
         unrated_movies = [mid for mid in all_movies.index if mid not in rated_movie_ids]
         
-        # Sample 1000 random unrated movies to speed up predictions
+        # Sample movies to speed up predictions for large datasets
         if len(unrated_movies) > 1000:
             sample_movies = np.random.choice(unrated_movies, size=1000, replace=False)
         else:
@@ -191,8 +203,8 @@ class MovieRecommender:
             # Count genre preferences
             genre_counts = {}
             for genre in ['Action', 'Adventure', 'Animation', 'Children', 'Comedy', 
-                         'Crime', 'Documentary', 'Drama', 'Fantasy', 'Horror', 
-                         'Mystery', 'Romance', 'Sci-Fi', 'Thriller', 'War', 'Western']:
+                         'Crime', 'Documentary', 'Drama', 'Fantasy', 'Film-Noir', 'Horror', 
+                         'Musical', 'Mystery', 'Romance', 'Sci-Fi', 'Thriller', 'War', 'Western']:
                 if genre in user_movies.columns:
                     genre_counts[genre] = user_movies[genre].sum()
             

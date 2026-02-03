@@ -2,15 +2,76 @@ import pandas as pd
 import os
 
 class MovieData:
-    def __init__(self, data_path='ml-32m'):
+    def __init__(self, data_path='ml-100k'):
         self.data_path = data_path
         self.movies_df = None
         self.ratings_df = None
         self.load_data()
     
     def load_data(self):
+        """Load MovieLens data - auto-detect format"""
+        print(f"Loading MovieLens dataset from {self.data_path}...")
+        
+        # Check if it's 100k or larger dataset
+        if os.path.exists(os.path.join(self.data_path, 'u.item')):
+            # ml-100k format
+            self.load_data_100k()
+        elif os.path.exists(os.path.join(self.data_path, 'movies.csv')):
+            # ml-32m format
+            self.load_data_32m()
+        else:
+            raise FileNotFoundError(f"No valid MovieLens dataset found in {self.data_path}")
+    
+    def load_data_100k(self):
+        """Load MovieLens 100K data"""
+        print("Loading ml-100k dataset...")
+        
+        # Load movies
+        movies_file = os.path.join(self.data_path, 'u.item')
+        
+        # Column names for u.item
+        movie_cols = ['movie_id', 'title', 'release_date', 'video_release_date',
+                      'imdb_url', 'unknown', 'Action', 'Adventure', 'Animation',
+                      'Children', 'Comedy', 'Crime', 'Documentary', 'Drama',
+                      'Fantasy', 'Film-Noir', 'Horror', 'Musical', 'Mystery',
+                      'Romance', 'Sci-Fi', 'Thriller', 'War', 'Western']
+        
+        self.movies_df = pd.read_csv(
+            movies_file,
+            sep='|',
+            encoding='latin-1',
+            names=movie_cols,
+            index_col='movie_id'
+        )
+        
+        # Clean up title
+        self.movies_df['title'] = self.movies_df['title'].str.strip()
+        
+        # Create a genre string for each movie
+        genre_cols = ['Action', 'Adventure', 'Animation', 'Children', 'Comedy',
+                     'Crime', 'Documentary', 'Drama', 'Fantasy', 'Film-Noir',
+                     'Horror', 'Musical', 'Mystery', 'Romance', 'Sci-Fi',
+                     'Thriller', 'War', 'Western']
+        
+        self.movies_df['genres'] = self.movies_df[genre_cols].apply(
+            lambda row: ', '.join([col for col, val in row.items() if val == 1]),
+            axis=1
+        )
+        
+        # Load ratings
+        ratings_file = os.path.join(self.data_path, 'u.data')
+        self.ratings_df = pd.read_csv(
+            ratings_file,
+            sep='\t',
+            names=['user_id', 'movie_id', 'rating', 'timestamp']
+        )
+        
+        print(f"✅ Loaded {len(self.movies_df)} movies")
+        print(f"✅ Loaded {len(self.ratings_df)} ratings")
+    
+    def load_data_32m(self):
         """Load MovieLens 32M data"""
-        print("Loading MovieLens 32M dataset (this may take a minute)...")
+        print("Loading ml-32m dataset (this may take a minute)...")
         
         # Load movies
         movies_file = os.path.join(self.data_path, 'movies.csv')
@@ -88,7 +149,7 @@ if __name__ == "__main__":
         print(f"Genres: {movie['genres']}")
     
     # Test search
-    results = movie_data.search_movies("Avengers")
-    print(f"\nSearch results for 'Avengers': {len(results)} movies found")
+    results = movie_data.search_movies("Star Wars")
+    print(f"\nSearch results for 'Star Wars': {len(results)} movies found")
     if len(results) > 0:
         print(results[['title', 'genres']].head())
