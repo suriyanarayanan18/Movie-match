@@ -1,7 +1,10 @@
 # 🎬 MovieMatch - AI-Powered Movie Recommendation Platform
 
+<p align="center">
+  <img src="Screenshots/Login.png" alt="MovieMatch Banner" width="800"/>
+</p>
 
-![MovieMatch Banner](Screenshots/Login.png)
+
 
 **An intelligent movie recommendation system powered by machine learning**
 
